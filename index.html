@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para o Amor da Minha vida 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #c0395c;
+    --rose-light: #f7d6e0;
+    --rose-pale: #fef0f3;
+    --rose-dark: #8b1a35;
+    --cream: #fff8f9;
+    --gold: #c9932a;
+    --text: #3a1a24;
+    --text-muted: #8a5567;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- PETALS ---- */
+  .petals-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .petal {
+    position: absolute;
+    width: 12px; height: 16px;
+    background: radial-gradient(ellipse at 40% 30%, #f9c0cf, #e07090);
+    border-radius: 50% 0 50% 0;
+    opacity: 0;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.7; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(110vh) rotate(360deg) translateX(60px); opacity: 0; }
+  }
+
+  /* ---- LOGIN ---- */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #fff0f4 0%, #ffe4ec 50%, #ffd6e4 100%);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+  #login-screen.hide {
+    opacity: 0; transform: scale(1.05); pointer-events: none;
+  }
+  .login-card {
+    background: white;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(192,57,92,0.15);
+    max-width: 380px; width: 90%;
+    position: relative;
+  }
+  .login-card::before {
+    content: '';
+    position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #e07090, #c9932a, #e07090);
+    z-index: -1;
+  }
+  .heart-big {
+    font-size: 3.5rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--rose-dark);
+    margin-bottom: 0.5rem;
+  }
+  .login-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .login-input {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    border: 2px solid var(--rose-light);
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    text-align: center;
+    color: var(--text);
+    background: var(--rose-pale);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .login-input:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 4px rgba(192,57,92,0.1);
+  }
+  .login-btn {
+    margin-top: 1.2rem;
+    width: 100%;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(192,57,92,0.3); }
+  .login-btn:active { transform: translateY(0); }
+  .login-error {
+    color: var(--rose);
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    min-height: 1.2em;
+  }
+  .hint {
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    color: #cba4b0;
+    font-style: italic;
+  }
+
+  /* ---- MAIN APP ---- */
+  #app {
+    display: none;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  #app.visible { display: flex; }
+
+  /* HEADER */
+  .app-header {
+    text-align: center;
+    padding: 2.5rem 1rem 1rem;
+    position: relative;
+  }
+  .greeting {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    color: var(--rose-dark);
+    line-height: 1.2;
+  }
+  .greeting span {
+    color: var(--rose);
+    font-style: italic;
+  }
+  .app-date {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin: 1.5rem auto 0;
+    background: white;
+    border-radius: 50px;
+    padding: 5px;
+    width: fit-content;
+    box-shadow: 0 2px 20px rgba(192,57,92,0.12);
+    max-width: 90vw;
+  }
+  .tab-btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    background: transparent;
+    border-radius: 50px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+    color: white;
+    box-shadow: 0 4px 14px rgba(192,57,92,0.3);
+  }
+  .tab-btn:hover:not(.active) { color: var(--rose); }
+
+  /* TAB CONTENT */
+  .tab-content {
+    flex: 1;
+    padding: 2rem 1rem 3rem;
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== ABA INÍCIO ===== */
+  .inicio-hero {
+    text-align: center;
+    padding: 1rem 0 2rem;
+  }
+  .inicio-hero .heart-row {
+    font-size: 1.6rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .inicio-main-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--rose-dark);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+  .inicio-main-text em { color: var(--rose); }
+  .inicio-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(192,57,92,0.08);
+    border-left: 4px solid var(--rose);
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  .inicio-card p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+    font-weight: 300;
+  }
+  .inicio-card p strong {
+    color: var(--rose-dark);
+    font-weight: 400;
+  }
+  .reasons-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--rose-dark);
+    margin: 2rem 0 1rem;
+    text-align: center;
+  }
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .reason-item {
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(192,57,92,0.07);
+    transition: transform 0.3s;
+  }
+  .reason-item:hover { transform: translateY(-4px); }
+  .reason-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--rose-light);
+    font-style: italic;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+  .reason-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .countdown-box {
+    background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+    color: white;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .countdown-box p { font-size: 0.85rem; opacity: 0.85; margin-bottom: 0.5rem; }
+  .countdown-box .big { font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+
+  /* ===== ABA FOTOS ===== */
+  .photos-intro {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--rose-dark);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .photo-slot {
+    aspect-ratio: 4/5;
+    background: white;
+    border-radius: 16px;
+    border: 2px dashed var(--rose-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(192,57,92,0.06);
+  }
+  .photo-slot:hover { border-color: var(--rose); box-shadow: 0 8px 24px rgba(192,57,92,0.15); }
+  .photo-slot img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 14px;
+  }
+  .photo-slot .add-icon { font-size: 2rem; color: var(--rose-light); margin-bottom: 0.5rem; transition: color 0.3s; }
+  .photo-slot:hover .add-icon { color: var(--rose); }
+  .photo-slot .add-label { font-size: 0.8rem; color: var(--text-muted); }
+  .photo-slot .photo-caption {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(139,26,53,0.75));
+    color: white;
+    font-size: 0.8rem;
+    padding: 1.5rem 0.8rem 0.7rem;
+    border-radius: 0 0 14px 14px;
+    display: none;
+  }
+  .photo-slot.has-photo .photo-caption { display: block; }
+  .photo-slot.has-photo .add-icon, .photo-slot.has-photo .add-label { display: none; }
+  .photo-upload-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-top: 1.5rem;
+    font-style: italic;
+  }
+
+  /* ===== ABA MENSAGENS ===== */
+  .msg-intro {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--rose-dark);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+  }
+  .msg-sub {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .msg-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 20px rgba(192,57,92,0.07);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .msg-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(192,57,92,0.13); }
+  .msg-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--rose), var(--gold));
+  }
+  .msg-card .quote-mark {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    color: var(--rose-light);
+    line-height: 0.5;
+    display: block;
+    margin-bottom: 0.8rem;
+    padding-left: 0.5rem;
+  }
+  .msg-card p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+    padding-left: 0.5rem;
+  }
+  .msg-card .msg-from {
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    display: block;
+    text-align: right;
+    padding-left: 0;
+  }
+  .final-msg {
+    background: linear-gradient(135deg, var(--rose-dark), var(--rose));
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    color: white;
+    margin-top: 1.5rem;
+  }
+  .final-msg p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    font-style: italic;
+    opacity: 0.95;
+  }
+  .final-msg .sign {
+    margin-top: 1rem;
+    font-family: 'Lato', sans-serif;
+    font-style: normal;
+    font-size: 0.85rem;
+    opacity: 0.75;
+    letter-spacing: 0.08em;
+  }
+
+  /* hidden file input */
+  #file-input { display: none; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--rose-light); border-radius: 3px; }
+
+
+  .foto {
+
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Pétalas caindo -->
+<div class="petals-bg" id="petals"></div>
+
+<!-- Tela de Login -->
+<div id="login-screen">
+  <div class="login-card">
+    <img src="Amor-login.jpeg" alt="Minha foto" class="foto">
+    <h1 class="login-title">Um presente especial</h1>
+    <p class="login-subtitle">Só para uma pessoa muito especial entrar aqui…<br>Escreva seu nome para descobrir quem é.</p>
+    <input type="text" class="login-input" id="name-input" placeholder="Seu nome" autocomplete="off" />
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" onclick="tryLogin()">Abrir meu presente 💕</button>
+    <p class="hint">Dica: é o nome de quem tem meu coração 🌹</p>
+  </div>
+</div>
+
+<!-- App Principal -->
+<div id="app">
+  <div class="app-header">
+    <h1 class="greeting">Feliz Dia dos Namorados,<br><span id="user-name-display">amor</span> ✨</h1>
+    <p class="app-date">12 de JUNHO · COM TODO MEU AMOR</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('inicio', this)">🏠 Início</button>
+    <button class="tab-btn" onclick="switchTab('fotos', this)">📷 Nossas Fotos</button>
+    <button class="tab-btn" onclick="switchTab('mensagens', this)">💌 Mensagens</button>
+  </div>
+
+  <!-- ABA INÍCIO -->
+  <div class="tab-content" id="tab-inicio">
+    <div class="inicio-hero">
+      <div class="heart-row">♡ ♡ ♡</div>
+      <p class="inicio-main-text">Você é a <em>melhor coisa</em><br>que já aconteceu na minha vida.</p>
+    </div>
+
+    <div class="inicio-card">
+      <p>
+        Meu amor esta página eu fiz para tentar demonstrar uma fração do meu amor por você, que não é possível medir só em palavras. Quero que você lembre o quanto é especial pra mim e nunca se esqueça que é você quem eu quero para o resto da minha vida.<br><br>
+        <strong>Esse site é um dos meus presentes para você.</strong> Fiz com muito amor e com palavras que as vezes não digo o quanto deveria, mas que sinto todas as vezes que olho para a mulher linda que está ao meu lado.
+      </p>
+    </div>
+
+    <h2 class="reasons-title">Algumas razões pelas quais eu te amo</h2>
+    <div class="reasons-grid">
+      <div class="reason-item">
+        <span class="reason-num">01</span>
+        <p class="reason-text">Pelo seu sorriso que me contagia</p>
+      </div>
+      <div class="reason-item">
+        <span class="reason-num">02</span>
+        <p class="reason-text">Pelo jeito único que você olha para mim</p>
+      </div>
+      <div class="reason-item">
+        <span class="reason-num">03</span>
+        <p class="reason-text">Por ser minha melhor amiga</p>
+      </div>
+      <div class="reason-item">
+        <span class="reason-num">04</span>
+        <p class="reason-text">Por me fazer querer ser uma pessoa melhor</p>
+      </div>
+      <div class="reason-item">
+        <span class="reason-num">05</span>
+        <p class="reason-text">Pelo seu abraço que parece que resolve tudo</p>
+      </div>
+      <div class="reason-item">
+        <span class="reason-num">06</span>
+        <p class="reason-text">Por simplesmente existir e ser tão você</p>
+      </div>
+    </div>
+
+    <div class="countdown-box">
+      <p>🌹 12 de junho · Dia dos Namorados</p>
+      <p class="big" id="love-timer">carregando...</p>
+    </div>
+  </div>
+
+  <!-- ABA FOTOS -->
+  <div class="tab-content" id="tab-fotos" style="display:none">
+    <p class="photos-intro">Cada foto, uma memória guardada no coração 📸</p>
+    <div class="photo-grid" id="photo-grid">
+      <!-- gerado por JS -->
+    </div>
+    <input type="file" id="file-input" accept="image/*" />
+  </div>
+
+  <!-- ABA MENSAGENS -->
+  <div class="tab-content" id="tab-mensagens" style="display:none">
+    <p class="msg-intro">Palavras do fundo do coração</p>
+    <p class="msg-sub">Tudo que sinto por você, escrito com amor</p>
+
+    <div class="msg-card">
+      <span class="quote-mark">"</span>
+      <p>Kerolaine meu amor, reservo essa primeira mensagem para te pedir perdão por todas as vezes que te fiz chorar, todas as vezes que por minha culpa você passou o dia se sentindo mal, todas as vezes que te magoei e te deixei triste, todas as vezes que não demonstrei amor o suficiente, todas as vezes que você se sentiu ignorada, todas as vezes que não fui bom o sufuciente para você. Peço perdão por todas as vezes que não fui o namorado que você desejava.</p>
+      <span class="msg-from">— Acima de qualquer orgulho está o meu amor por você</span>
+    </div>
+
+    <div class="msg-card">
+      <span class="quote-mark">"</span>
+      <p>Amor você é incrível tá, é a pessoa certa para mim, apesar de todos os erros e defeitos que temos, apesar de todas as imperfeições, a vontade de nos tornarmos melhores um para com o outro faz a nossa relação ser a mais perfeita que posso imaginar.</p>
+      <span class="msg-from">— Com amor, sempre</span>
+    </div>
+
+
+    <div class="msg-card">
+      <span class="quote-mark">"</span>
+      <p>Linda, todas as vezes que olho para você fico admirado, com seu com sua beleza, seu corpo perfeito, seus olhos brilhantes, sua boca macia, sua voz que vira uma canção toda vez que te ouço, com seu cabelo cheiroso, seu pescoço que se torna o melhor lugar do mundo para ficar. Eu amo sentir você meu amor.</p>
+      <span class="msg-from">— Para a mulher mais Linda</span>
+    </div>
+
+    <div class="msg-card">
+      <span class="quote-mark">"</span>
+      <p>Já disse que você é incrível? Amor seu corpo foi a última coisa pelo qual me apaixonei de verdade. Toda vez que ouvia sua voz eu me apaixonava mais e mais por você, vendo a mulher super inteligente que você é, a bondade no seu coração e a sua capacidade de sentir as coisas ao seu redor, sorrindo, chorando, mas acima de tudo sentindo.</p>
+      <span class="msg-from">— Amor a primeira ouvida 😅.</span>
+    </div>
+
+    <div class="msg-card">
+      <span class="quote-mark">"</span>
+      <p>Kero, eu quero que você saiba que, eu sou seu porto seguro, você pode confiar em mim para qualquer coisa, falar suas conquistas, suas alegrias, o que te deixa irritada, o que te deixa triste, o que te magoa, todos os seus desejos que ficarei muito feliz em torna-los realidades. Desejo que você sinta conforto em desabafar comigo, pois sei que você tem muitas responsabilidades e não quero que você aguente tudo sozinha.</p>
+      <span class="msg-from">— Estou aqui para você</span>
+    </div>
+
+    <div class="final-msg">
+      <p>Feliz Dia dos Namorados, meu amor.<br>Que hoje seja só um lembrete do quanto você é amada — não só hoje, mas em cada dia comum que passa.</p>
+      <p class="sign">COM TODO MEU AMOR · 12.06 · SEMPRE ♡</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ---- PÉTALAS ---- */
+  const pb = document.getElementById('petals');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (6 + Math.random() * 8) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.transform = 'scale(' + (0.6 + Math.random() * 0.8) + ')';
+    pb.appendChild(p);
+  }
+
+  /* ---- LOGIN ---- */
+  // PERSONALIZE AQUI: coloque o nome da sua namorada (pode adicionar variações/apelidos)
+  const NOMES_ACEITOS = [''];
+  // Exemplos: ['Ana', 'Ana Clara', 'Aninha', 'Meu amor']
+
+  function tryLogin() {
+    const val = document.getElementById('name-input').value.trim();
+    const err = document.getElementById('login-error');
+    if (!val) { err.textContent = 'Escreve seu nome pra mim 🌸'; return; }
+    const aceito = NOMES_ACEITOS.length === 0 || NOMES_ACEITOS.some(n =>
+      n.trim().toLowerCase() === val.toLowerCase()
+    );
+    if (aceito || NOMES_ACEITOS[0] === '') {
+      document.getElementById('user-name-display').textContent = val;
+      document.getElementById('login-screen').classList.add('hide');
+      const app = document.getElementById('app');
+      app.classList.add('visible');
+      startTimer();
+    } else {
+      err.textContent = 'Hmm... só a pessoa certa pode entrar aqui 💕';
+      document.getElementById('name-input').style.borderColor = '#e07090';
+      setTimeout(() => {
+        document.getElementById('name-input').style.borderColor = '';
+        err.textContent = '';
+      }, 2000);
+    }
+  }
+  document.getElementById('name-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  /* ---- TABS ---- */
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).style.display = 'block';
+    btn.classList.add('active');
+  }
+
+  /* ---- TIMER ---- */
+  function startTimer() {
+    function update() {
+      const now = new Date();
+      const valentines = new Date(now.getFullYear(), 5, 12); // 12 junho
+      if (now > valentines) valentines.setFullYear(valentines.getFullYear() + 1);
+      const diff = valentines - now;
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      const el = document.getElementById('love-timer');
+      if (!el) return;
+      if (d === 0 && h === 0 && m === 0) {
+        el.textContent = 'Hoje é o nosso dia! 🌹';
+      } else {
+        el.textContent = `${d}d ${h}h ${m}m ${s}s para o próximo`;
+      }
+    }
+    update();
+    setInterval(update, 1000);
+  }
+
+/* ---- FOTOS ---- */
+  // ================================================
+  // PERSONALIZE AQUI: coloque o caminho ou URL de
+  // cada foto e a legenda que quiser exibir.
+  // Exemplo de caminho local:  'fotos/foto1.jpg'
+  // Exemplo de URL:            'https://i.imgur.com/abc123.jpg'
+  // Deixe src: '' para a moldura ficar vazia.
+  // ================================================
+  const FOTOS = [
+    { src: 'Amor-6.jpeg', caption: 'Nossa melhor memória 🌹' },
+    { src: 'Amor-2.jpeg', caption: 'Sempre vou lembrar desse dia 💕' },
+    { src: 'Amor-4.jpeg', caption: 'Você linda como sempre ✨' },
+    { src: 'Amor-5.jpeg', caption: 'A foto favorita nossa 📸' },
+    { src: 'Amor-1.jpeg', caption: 'Nosso momento especial 🌸' },
+    { src: 'Amor-7.jpeg', caption: 'Te amo tanto 💗' }
+  ];
+ 
+  function buildGrid() {
+    const grid = document.getElementById('photo-grid');
+    grid.innerHTML = '';
+    FOTOS.forEach((foto, i) => {
+      const slot = document.createElement('div');
+      slot.className = 'photo-slot' + (foto.src ? ' has-photo' : '');
+      slot.innerHTML = foto.src
+        ? `<img src="${foto.src}" alt="Foto ${i+1}"><div class="photo-caption">${foto.caption}</div>`
+        : `<div class="add-icon">📷</div><div class="add-label">${foto.caption}</div>`;
+      grid.appendChild(slot);
+    });
+  }
+  buildGrid();
+</script>
+</body>
+</html>
